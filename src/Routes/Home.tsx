@@ -3,10 +3,10 @@ import styled from "styled-components";
 import { AnimatePresence, motion } from "framer-motion";
 import { getMovies, IGetMoviesResult } from "../api";
 import { makeImagePath } from "./utils";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const Wrapper = styled.div`
-  background-color: black;
+  background-color: teal;
   height: 200vh;
 `;
 
@@ -17,10 +17,10 @@ const Loader = styled.div`
   align-items: center;
 `;
 
-const Banner = styled.div<{ bgPhoto: string }>`
+const Banner = styled.div<{ bgphoto: string }>`
   height: 100vh;
   background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1)),
-    url(${(props) => props.bgPhoto});
+    url(${(props) => props.bgphoto});
   background-size: cover;
   display: flex;
   flex-direction: column;
@@ -51,26 +51,14 @@ const Row = styled(motion.div)`
   width: 100%;
 `;
 
-const Box = styled(motion.div)<{ bgPhoto: string }>`
-  background-image: url(${(props) => props.bgPhoto});
+const Box = styled(motion.div)<{ bgphoto: string }>`
+  background-image: url(${(props) => props.bgphoto});
   background-size: cover;
   background-position: center center;
   height: 200px;
   color: red;
   font-size: 34px;
 `;
-
-const rowVariants = {
-  hidden: {
-    x: window.innerWidth + 10,
-  },
-  visible: {
-    x: 0,
-  },
-  exit: {
-    x: -window.innerWidth,
-  },
-};
 
 const offset = 6;
 
@@ -81,6 +69,8 @@ function Home() {
   );
   const [index, setIndex] = useState(0);
   const [exiting, setExiting] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  window.addEventListener("resize", () => setWindowWidth(window.innerWidth));
 
   const increaseIndex = () => {
     if (data) {
@@ -100,7 +90,7 @@ function Home() {
         <>
           <Banner
             onClick={increaseIndex}
-            bgPhoto={makeImagePath(data?.results[0].backdrop_path ?? "")}
+            bgphoto={makeImagePath(data?.results[0].backdrop_path ?? "")}
           >
             <Title>{data?.results[0].title}</Title>
             <OverView>{data?.results[0].overview}</OverView>
@@ -111,11 +101,10 @@ function Home() {
               onExitComplete={() => setExiting(false)}
             >
               <Row
-                variants={rowVariants}
-                initial="hidden"
-                animate="visible"
-                exit="exit"
-                transition={{ duration: 0.8, type: "tween" }}
+                initial={{ x: windowWidth }}
+                animate={{ x: 0 }}
+                exit={{ x: -windowWidth }}
+                transition={{ duration: 1.8, type: "tween" }}
                 key={index}
               >
                 {data?.results
@@ -124,7 +113,7 @@ function Home() {
                   .map((movie) => (
                     <Box
                       key={movie.id}
-                      bgPhoto={makeImagePath(movie.backdrop_path ?? "", "w500")}
+                      bgphoto={makeImagePath(movie.backdrop_path ?? "", "w500")}
                     ></Box>
                   ))}
               </Row>

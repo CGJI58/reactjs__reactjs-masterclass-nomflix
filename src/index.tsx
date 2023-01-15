@@ -59,7 +59,7 @@ table {
   box-sizing: border-box;
 }
 body {
-  background-color: black;
+  background-color: teal;
   font-weight: 300;
   font-family: 'Source Sans Pro', sans-serif;
   color: ${(props) => props.theme.white.darker};
