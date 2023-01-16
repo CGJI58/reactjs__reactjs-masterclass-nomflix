@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { AnimatePresence, motion } from "framer-motion";
 import { getMovies, IGetMoviesResult } from "../api";
 import { makeImagePath } from "./utils";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const Wrapper = styled.div`
   background-color: teal;
@@ -58,7 +58,27 @@ const Box = styled(motion.div)<{ bgphoto: string }>`
   height: 200px;
   color: red;
   font-size: 34px;
+  &:first-child {
+    transform-origin: center left;
+  }
+  &:last-child {
+    transform-origin: center right;
+  }
 `;
+
+const BoxVariants = {
+  normal: {
+    scale: 1,
+  },
+  hover: {
+    scale: 1.3,
+    transition: {
+      delay: 0.5,
+      duration: 0.3,
+      type: "tween",
+    },
+  },
+};
 
 const offset = 6;
 
@@ -104,7 +124,7 @@ function Home() {
                 initial={{ x: windowWidth }}
                 animate={{ x: 0 }}
                 exit={{ x: -windowWidth }}
-                transition={{ duration: 1.8, type: "tween" }}
+                transition={{ duration: 0.8, type: "tween" }}
                 key={index}
               >
                 {data?.results
@@ -112,7 +132,11 @@ function Home() {
                   .slice(index * offset, index * offset + offset)
                   .map((movie) => (
                     <Box
+                      variants={BoxVariants}
+                      initial="normal"
                       key={movie.id}
+                      whileHover="hover"
+                      transition={{ type: "tween" }}
                       bgphoto={makeImagePath(movie.backdrop_path ?? "", "w500")}
                     ></Box>
                   ))}
