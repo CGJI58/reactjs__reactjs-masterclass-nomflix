@@ -1,6 +1,6 @@
 import { useQuery } from "react-query";
 import styled from "styled-components";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useScroll } from "framer-motion";
 import { getMovies, IGetMoviesResult } from "../api";
 import { makeImagePath } from "./utils";
 import { useState } from "react";
@@ -81,6 +81,24 @@ const BoxInfo = styled(motion.div)`
   }
 `;
 
+const Overlay = styled(motion.div)`
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+`;
+
+const FocusedMovie = styled(motion.div)`
+  position: absolute;
+  width: 40vw;
+  height: 80vh;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+`;
+
 const BoxVariants = {
   normal: {
     scale: 1,
@@ -120,7 +138,7 @@ function Home() {
   const [index, setIndex] = useState(0);
   const [exiting, setExiting] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-
+  const { scrollY } = useScroll();
   window.addEventListener("resize", () => setWindowWidth(window.innerWidth));
 
   const increaseIndex = () => {
@@ -135,6 +153,7 @@ function Home() {
   const onBoxClicked = (movieId: number) => {
     history.push(`/movies/${movieId}`);
   };
+  const onOverlayClicked = () => history.goBack();
 
   return (
     <Wrapper>
@@ -185,19 +204,19 @@ function Home() {
           </Slider>
           <AnimatePresence>
             {focusedMovieMatch ? (
-              <motion.div
-                layoutId={focusedMovieMatch.params.movieId}
-                style={{
-                  position: "absolute",
-                  width: "40vw",
-                  height: "80vh",
-                  backgroundColor: "gray",
-                  top: 50,
-                  left: 0,
-                  right: 0,
-                  margin: "0 auto",
-                }}
-              ></motion.div>
+              <>
+                <Overlay
+                  onClick={onOverlayClicked}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                ></Overlay>
+                <FocusedMovie
+                  layoutId={focusedMovieMatch.params.movieId}
+                  style={{ top: scrollY.get() + 100 }}
+                >
+                  hello
+                </FocusedMovie>
+              </>
             ) : null}
           </AnimatePresence>
         </>
