@@ -1,9 +1,9 @@
 import { useQuery } from "react-query";
 import styled from "styled-components";
 import { AnimatePresence, motion, useScroll } from "framer-motion";
-import { getMovies, IGetMoviesResult } from "../api";
+import { getMovies, IGetMoviesResult, IMovie } from "../api";
 import { makeImagePath } from "./utils";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom";
 
 const Wrapper = styled.div`
@@ -18,7 +18,7 @@ const Loader = styled.div`
   align-items: center;
 `;
 
-const Banner = styled.div<{ bgphoto: string }>`
+const Banner = styled(motion.div)<{ bgphoto: string }>`
   height: 100vh;
   background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1)),
     url(${(props) => props.bgphoto});
@@ -97,6 +97,33 @@ const FocusedMovie = styled(motion.div)`
   left: 0;
   right: 0;
   margin: 0 auto;
+  border-radius: 15px;
+  overflow: hidden;
+  background-color: ${(props) => props.theme.black.lighter};
+`;
+
+const FocusedCover = styled.div`
+  width: 100%;
+  background-size: cover;
+  background-position: center center;
+  height: 400px;
+`;
+
+const FocusedTitle = styled.h3`
+  color: ${(props) => props.theme.white.lighter};
+  padding: 20px;
+  font-size: 46px;
+  position: relative;
+  top: -80px;
+`;
+
+const FocusedOverview = styled.p`
+  padding: 20px;
+  position: relative;
+  top: -80px;
+  color: ${(props) => props.theme.white.lighter};
+  font-size: 20px;
+  line-height: 34px;
 `;
 
 const BoxVariants = {
@@ -139,22 +166,29 @@ function Home() {
   const [exiting, setExiting] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const { scrollY } = useScroll();
+  const [banner, setBanner] = useState<IMovie>();
   window.addEventListener("resize", () => setWindowWidth(window.innerWidth));
-
   const increaseIndex = () => {
     if (data) {
       if (exiting) return;
       setExiting(true);
-      const numberOfMovies = data?.results.length - 1;
+      const numberOfMovies = data?.results.length;
       const maxIndex = Math.ceil(numberOfMovies / offset) - 1;
       return setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
     }
   };
   const onBoxClicked = (movieId: number) => {
     history.push(`/movies/${movieId}`);
+    setBanner(() => data?.results.find((item) => item.id === movieId));
   };
   const onOverlayClicked = () => history.goBack();
+  const clickedMovie =
+    focusedMovieMatch?.params.movieId &&
+    data?.results.find(
+      (movie) => movie.id === +focusedMovieMatch.params.movieId
+    );
 
+  useEffect(() => setBanner(() => data?.results[0]), [isLoading]);
   return (
     <Wrapper>
       {isLoading ? (
@@ -163,10 +197,10 @@ function Home() {
         <>
           <Banner
             onClick={increaseIndex}
-            bgphoto={makeImagePath(data?.results[0].backdrop_path ?? "")}
+            bgphoto={makeImagePath(banner?.backdrop_path ?? "")}
           >
-            <Title>{data?.results[0].title}</Title>
-            <OverView>{data?.results[0].overview}</OverView>
+            <Title>{banner?.title}</Title>
+            <OverView>{banner?.overview}</OverView>
           </Banner>
           <Slider>
             <AnimatePresence
@@ -181,7 +215,6 @@ function Home() {
                 key={index}
               >
                 {data?.results
-                  .slice(1)
                   .slice(index * offset, index * offset + offset)
                   .map((movie) => (
                     <Box
@@ -214,7 +247,20 @@ function Home() {
                   layoutId={focusedMovieMatch.params.movieId}
                   style={{ top: scrollY.get() + 100 }}
                 >
-                  hello
+                  {clickedMovie && (
+                    <>
+                      <FocusedCover
+                        style={{
+                          backgroundImage: `linear-gradient(to top, black, transparent), url(${makeImagePath(
+                            clickedMovie.backdrop_path,
+                            "w500"
+                          )})`,
+                        }}
+                      />
+                      <FocusedTitle>{clickedMovie.title}</FocusedTitle>
+                      <FocusedOverview>{clickedMovie.overview}</FocusedOverview>
+                    </>
+                  )}
                 </FocusedMovie>
               </>
             ) : null}
