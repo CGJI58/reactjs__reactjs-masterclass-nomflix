@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { getMovies, IGetMoviesResult } from "../api";
 import { makeImagePath } from "./utils";
 import { useState } from "react";
+import { useHistory, useRouteMatch } from "react-router-dom";
 
 const Wrapper = styled.div`
   background-color: teal;
@@ -58,6 +59,7 @@ const Box = styled(motion.div)<{ bgphoto: string }>`
   height: 200px;
   color: red;
   font-size: 34px;
+  cursor: pointer;
   &:first-child {
     transform-origin: center left;
   }
@@ -111,9 +113,14 @@ function Home() {
     ["movies", "nowPlaying"],
     getMovies
   );
+  const history = useHistory();
+  const focusedMovieMatch = useRouteMatch<{ movieId: string }>(
+    "/movies/:movieId"
+  );
   const [index, setIndex] = useState(0);
   const [exiting, setExiting] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
   window.addEventListener("resize", () => setWindowWidth(window.innerWidth));
 
   const increaseIndex = () => {
@@ -124,6 +131,9 @@ function Home() {
       const maxIndex = Math.ceil(numberOfMovies / offset) - 1;
       return setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
     }
+  };
+  const onBoxClicked = (movieId: number) => {
+    history.push(`/movies/${movieId}`);
   };
 
   return (
@@ -156,6 +166,8 @@ function Home() {
                   .slice(index * offset, index * offset + offset)
                   .map((movie) => (
                     <Box
+                      layoutId={movie.id + ""}
+                      onClick={() => onBoxClicked(movie.id)}
                       variants={BoxVariants}
                       initial="normal"
                       key={movie.id}
@@ -171,6 +183,23 @@ function Home() {
               </Row>
             </AnimatePresence>
           </Slider>
+          <AnimatePresence>
+            {focusedMovieMatch ? (
+              <motion.div
+                layoutId={focusedMovieMatch.params.movieId}
+                style={{
+                  position: "absolute",
+                  width: "40vw",
+                  height: "80vh",
+                  backgroundColor: "gray",
+                  top: 50,
+                  left: 0,
+                  right: 0,
+                  margin: "0 auto",
+                }}
+              ></motion.div>
+            ) : null}
+          </AnimatePresence>
         </>
       )}
     </Wrapper>
