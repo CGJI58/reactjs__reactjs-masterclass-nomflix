@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom";
 
 const Wrapper = styled.div`
-  background-color: teal;
   height: 200vh;
 `;
 
@@ -27,6 +26,9 @@ const Banner = styled(motion.div)<{ bgphoto: string }>`
   flex-direction: column;
   justify-content: center;
   padding: 60px;
+  * {
+    text-shadow: #fc0 1px 0 10px;
+  }
 `;
 
 const Title = styled.h2`
@@ -37,6 +39,7 @@ const Title = styled.h2`
 const OverView = styled.p`
   font-size: 30px;
   width: 50%;
+  line-height: 42px;
 `;
 
 const Slider = styled.div`
@@ -47,7 +50,7 @@ const Slider = styled.div`
 const Row = styled(motion.div)`
   display: grid;
   gap: 5px;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   position: absolute;
   width: 100%;
 `;
@@ -60,12 +63,6 @@ const Box = styled(motion.div)<{ bgphoto: string }>`
   color: red;
   font-size: 34px;
   cursor: pointer;
-  &:first-child {
-    transform-origin: center left;
-  }
-  &:last-child {
-    transform-origin: center right;
-  }
 `;
 
 const BoxInfo = styled(motion.div)`
@@ -131,7 +128,7 @@ const BoxVariants = {
     scale: 1,
   },
   hover: {
-    scale: 1.3,
+    scale: 1.2,
     transition: {
       delay: 0.5,
       duration: 0.3,
@@ -151,7 +148,7 @@ const BoxInfoVariants = {
   },
 };
 
-const offset = 6;
+const offset = 5;
 
 function Home() {
   const { data, isLoading } = useQuery<IGetMoviesResult>(
@@ -163,15 +160,16 @@ function Home() {
     "/movies/:movieId"
   );
   const [index, setIndex] = useState(0);
-  const [exiting, setExiting] = useState(false);
+  const [exitComplete, setExitComplete] = useState(true);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  const { scrollY } = useScroll();
   const [banner, setBanner] = useState<IMovie>();
   window.addEventListener("resize", () => setWindowWidth(window.innerWidth));
+  const { scrollY } = useScroll();
+
   const increaseIndex = () => {
     if (data) {
-      if (exiting) return;
-      setExiting(true);
+      if (!exitComplete) return;
+      setExitComplete(false);
       const numberOfMovies = data?.results.length;
       const maxIndex = Math.ceil(numberOfMovies / offset) - 1;
       return setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
@@ -205,7 +203,7 @@ function Home() {
           <Slider>
             <AnimatePresence
               initial={false}
-              onExitComplete={() => setExiting(false)}
+              onExitComplete={() => setExitComplete(true)}
             >
               <Row
                 initial={{ x: windowWidth }}
