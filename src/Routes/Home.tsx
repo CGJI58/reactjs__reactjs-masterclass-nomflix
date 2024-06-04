@@ -1,7 +1,7 @@
 import { useQuery } from "react-query";
 import styled from "styled-components";
 import { AnimatePresence, motion, useScroll } from "framer-motion";
-import { getMovies, IGetMoviesResult, IMovie } from "../api";
+import { getMovies, IGetAllMoviesResult, IMovie } from "../api";
 import { makeImagePath } from "./utils";
 import { useEffect, useState } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom";
@@ -151,7 +151,7 @@ const BoxInfoVariants = {
 const offset = 5;
 
 function Home() {
-  const { data, isLoading } = useQuery<IGetMoviesResult>(
+  const { data, isLoading } = useQuery<IGetAllMoviesResult>(
     ["movies", "nowPlaying"],
     getMovies
   );
@@ -170,23 +170,25 @@ function Home() {
     if (data) {
       if (!exitComplete) return;
       setExitComplete(false);
-      const numberOfMovies = data?.results.length;
+      const numberOfMovies = data?.nowPlaying.results.length;
       const maxIndex = Math.ceil(numberOfMovies / offset) - 1;
       return setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
     }
   };
   const onBoxClicked = (movieId: number) => {
     history.push(`/movies/${movieId}`);
-    setBanner(() => data?.results.find((item) => item.id === movieId));
+    setBanner(() =>
+      data?.nowPlaying.results.find((item) => item.id === movieId)
+    );
   };
   const onOverlayClicked = () => history.goBack();
   const clickedMovie =
     focusedMovieMatch?.params.movieId &&
-    data?.results.find(
+    data?.nowPlaying.results.find(
       (movie) => movie.id === +focusedMovieMatch.params.movieId
     );
 
-  useEffect(() => setBanner(() => data?.results[0]), [isLoading]);
+  useEffect(() => setBanner(() => data?.nowPlaying.results[0]), [isLoading]);
   return (
     <Wrapper>
       {isLoading ? (
@@ -212,7 +214,7 @@ function Home() {
                 transition={{ duration: 0.8, type: "tween" }}
                 key={index}
               >
-                {data?.results
+                {data?.nowPlaying.results
                   .slice(index * offset, index * offset + offset)
                   .map((movie) => (
                     <Box

@@ -27,10 +27,29 @@ export interface IGetMoviesResult {
   results: IMovie[];
 }
 
+export interface IGetAllMoviesResult {
+  nowPlaying: IGetMoviesResult;
+  top_rated: IGetMoviesResult;
+  upcoming: IGetMoviesResult;
+}
+
 export async function getMovies() {
-  const data = await fetch(`${BASE_PATH}/movie/now_playing?api_key=${API_KEY}`);
-  const json = await data.json();
-  return json;
-  // fetch(`${BASE_PATH}/movie/now_playing?api_key=${API_KEY}`).then(
-  //   (response) => response.json()
+  const nowPlaying = await (
+    await fetch(`${BASE_PATH}/movie/now_playing?api_key=${API_KEY}`)
+  ).json();
+  // const latest = await (
+  //   await fetch(`${BASE_PATH}/movie/latest?api_key=${API_KEY}`)
+  // ).json();
+  const top_rated = await (
+    await fetch(`${BASE_PATH}/movie/top_rated?api_key=${API_KEY}`)
+  ).json();
+  const upcoming = await (
+    await fetch(`${BASE_PATH}/movie/upcoming?api_key=${API_KEY}`)
+  ).json();
+
+  return {
+    nowPlaying,
+    top_rated,
+    upcoming,
+  };
 }
