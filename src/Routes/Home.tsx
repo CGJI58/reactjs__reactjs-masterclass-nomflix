@@ -44,7 +44,8 @@ const OverView = styled.p`
 
 const Slider = styled.div`
   position: relative;
-  top: -100px;
+  display: flex;
+  align-items: center;
 `;
 
 const Row = styled(motion.div)`
@@ -53,6 +54,30 @@ const Row = styled(motion.div)`
   grid-template-columns: repeat(5, 1fr);
   position: absolute;
   width: 100%;
+  padding: 0 30px;
+`;
+
+const Button = styled(motion.div)`
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  cursor: pointer;
+  width: 50px;
+  height: 50px;
+  background-color: ${(props) => props.theme.black.darker};
+  border-radius: 50%;
+  z-index: 1;
+  opacity: 0.3;
+`;
+
+const ButtonLeft = styled(Button)`
+  left: 0px;
+`;
+
+const ButtonRight = styled(Button)`
+  right: 0px;
 `;
 
 const Box = styled(motion.div)<{ bgphoto: string }>`
@@ -195,10 +220,7 @@ function Home() {
         <Loader>Loading...</Loader>
       ) : (
         <>
-          <Banner
-            onClick={increaseIndex}
-            bgphoto={makeImagePath(banner?.backdrop_path ?? "")}
-          >
+          <Banner bgphoto={makeImagePath(banner?.backdrop_path ?? "")}>
             <Title>{banner?.title}</Title>
             <OverView>{banner?.overview}</OverView>
           </Banner>
@@ -207,6 +229,19 @@ function Home() {
               initial={false}
               onExitComplete={() => setExitComplete(true)}
             >
+              <ButtonLeft
+                whileHover={{ opacity: 1, scale: 1.1 }}
+                transition={{ duration: 0.3 }}
+              >
+                &lArr;
+              </ButtonLeft>
+              <ButtonRight
+                onClick={increaseIndex}
+                whileHover={{ opacity: 1, scale: 1.1 }}
+                transition={{ duration: 0.3 }}
+              >
+                &rArr;
+              </ButtonRight>
               <Row
                 initial={{ x: windowWidth }}
                 animate={{ x: 0 }}
