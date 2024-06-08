@@ -185,11 +185,23 @@ function Home() {
     "/movies/:movieId"
   );
   const [index, setIndex] = useState(0);
+  const [slideDirection, setSlideDirection] = useState(false);
   const [exitComplete, setExitComplete] = useState(true);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [banner, setBanner] = useState<IMovie>();
   window.addEventListener("resize", () => setWindowWidth(window.innerWidth));
   const { scrollY } = useScroll();
+
+  const decreaseIndex = () => {
+    if (data) {
+      if (!exitComplete) return;
+      setExitComplete(false);
+      const numberOfMovies = data?.nowPlaying.results.length;
+      const maxIndex = Math.ceil(numberOfMovies / offset) - 1;
+      setIndex((prev) => (prev === 0 ? maxIndex : prev - 1));
+      setSlideDirection(true);
+    }
+  };
 
   const increaseIndex = () => {
     if (data) {
@@ -197,7 +209,8 @@ function Home() {
       setExitComplete(false);
       const numberOfMovies = data?.nowPlaying.results.length;
       const maxIndex = Math.ceil(numberOfMovies / offset) - 1;
-      return setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
+      setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
+      setSlideDirection(false);
     }
   };
   const onBoxClicked = (movieId: number) => {
@@ -230,6 +243,7 @@ function Home() {
               onExitComplete={() => setExitComplete(true)}
             >
               <ButtonLeft
+                onClick={decreaseIndex}
                 whileHover={{ opacity: 1, scale: 1.1 }}
                 transition={{ duration: 0.3 }}
               >
@@ -243,10 +257,10 @@ function Home() {
                 &rArr;
               </ButtonRight>
               <Row
-                initial={{ x: windowWidth }}
+                initial={{ x: slideDirection ? -windowWidth : windowWidth }}
                 animate={{ x: 0 }}
-                exit={{ x: -windowWidth }}
-                transition={{ duration: 0.8, type: "tween" }}
+                exit={{ x: slideDirection ? windowWidth : -windowWidth }}
+                transition={{ duration: 3.8, type: "tween" }}
                 key={index}
               >
                 {data?.nowPlaying.results
