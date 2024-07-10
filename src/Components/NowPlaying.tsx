@@ -2,7 +2,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import styled from "styled-components";
 import { IGetMoviesResult } from "../api";
 import { useState } from "react";
-import { useHistory } from "react-router-dom";
 import { makeImagePath } from "../Routes/utils";
 
 const Wrapper = styled.div`
@@ -50,6 +49,7 @@ const Box = styled(motion.div)<{ bgphoto: string }>`
   height: 200px;
   font-size: 34px;
   cursor: pointer;
+  position: relative;
 `;
 
 const BoxInfo = styled(motion.div)`
@@ -71,6 +71,7 @@ const BoxVariants = {
   },
   hover: {
     scale: 1.2,
+    "z-index": 2,
     transition: {
       delay: 0.5,
       duration: 0.3,
@@ -80,6 +81,7 @@ const BoxVariants = {
 };
 
 const BoxInfoVariants = {
+  normal: { opacity: 0 },
   hover: {
     opacity: 1,
     transition: {
@@ -102,6 +104,7 @@ function NowPlaying({ movies, offset, rowWidth }: INowPlaying) {
   const paginate = (newDirection: number) => {
     const nextPage = page + newDirection;
     const maxPage = Math.ceil(movies.results.length / offset);
+
     if (nextPage === maxPage) {
       setPage([0, newDirection]);
     } else if (nextPage === -1) {
@@ -150,8 +153,8 @@ function NowPlaying({ movies, offset, rowWidth }: INowPlaying) {
                 layoutId={movie.id + ""}
                 variants={BoxVariants}
                 initial="normal"
-                key={movie.id}
                 whileHover="hover"
+                key={movie.id}
                 bgphoto={makeImagePath(movie.backdrop_path ?? "", "w500")}
               >
                 <BoxInfo variants={BoxInfoVariants}>

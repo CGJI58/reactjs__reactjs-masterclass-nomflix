@@ -15,6 +15,7 @@ const Nav = styled(motion.nav)`
   font-size: 14px;
   padding: 20px 60px;
   color: white;
+  z-index: 99;
 `;
 
 const Col = styled.div`
@@ -175,6 +176,7 @@ function Header() {
             onClick={toggleSearch}
             animate={{ x: searchOpen ? -210 : 0 }}
             transition={{ type: "linear" }}
+            style={{ cursor: "pointer" }}
             fill="currentColor"
             viewBox="0 0 20 20"
             xmlns="http://www.w3.org/2000/svg"
