@@ -10,7 +10,7 @@ const Wrapper = styled.div`
   align-items: center;
 `;
 
-const Button = styled(motion.div)`
+const Button = styled(motion.div)<{ direction: string }>`
   position: absolute;
   display: flex;
   justify-content: center;
@@ -21,16 +21,9 @@ const Button = styled(motion.div)`
   height: 50px;
   background-color: ${(props) => props.theme.black.darker};
   border-radius: 50%;
-  z-index: 1;
+  z-index: 3;
   opacity: 0.3;
-`;
-
-const ButtonLeft = styled(Button)`
-  left: 0px;
-`;
-
-const ButtonRight = styled(Button)`
-  right: 0px;
+  ${(props) => props.direction}: 0px;
 `;
 
 const Row = styled(motion.div)<{ offset: number }>`
@@ -100,11 +93,14 @@ interface INowPlaying {
 
 function NowPlaying({ movies, offset, rowWidth }: INowPlaying) {
   const [[page, direction], setPage] = useState([0, 0]);
+  const [exitComplete, setExitComplete] = useState(true);
 
   const paginate = (newDirection: number) => {
+    if (!exitComplete) return;
     const nextPage = page + newDirection;
     const maxPage = Math.ceil(movies.results.length / offset);
 
+    setExitComplete(false);
     if (nextPage === maxPage) {
       setPage([0, newDirection]);
     } else if (nextPage === -1) {
@@ -136,7 +132,11 @@ function NowPlaying({ movies, offset, rowWidth }: INowPlaying) {
 
   return (
     <Wrapper>
-      <AnimatePresence initial={false} custom={direction}>
+      <AnimatePresence
+        initial={false}
+        custom={direction}
+        onExitComplete={() => setExitComplete(true)}
+      >
         <Row
           offset={offset}
           key={page}
@@ -163,21 +163,23 @@ function NowPlaying({ movies, offset, rowWidth }: INowPlaying) {
               </Box>
             ))}
         </Row>
-        <ButtonLeft
-          whileHover={{ opacity: 1, scale: 1.1 }}
-          transition={{ duration: 0.3 }}
-          onClick={() => paginate(-1)}
-        >
-          &lArr;
-        </ButtonLeft>
-        <ButtonRight
-          whileHover={{ opacity: 1, scale: 1.1 }}
-          transition={{ duration: 0.3 }}
-          onClick={() => paginate(1)}
-        >
-          &rArr;
-        </ButtonRight>
       </AnimatePresence>
+      <Button
+        direction="left"
+        whileHover={{ opacity: 1, scale: 1.1 }}
+        transition={{ duration: 0.3 }}
+        onClick={() => paginate(-1)}
+      >
+        &lArr;
+      </Button>
+      <Button
+        direction="right"
+        whileHover={{ opacity: 1, scale: 1.1 }}
+        transition={{ duration: 0.3 }}
+        onClick={() => paginate(1)}
+      >
+        &rArr;
+      </Button>
     </Wrapper>
   );
 }
