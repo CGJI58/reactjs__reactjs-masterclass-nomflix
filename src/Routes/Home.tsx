@@ -1,11 +1,14 @@
 import { useQuery } from "react-query";
 import styled from "styled-components";
-import { AnimatePresence, motion, useScroll } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import { getMovies, IGetAllMoviesResult, IMovie } from "../api";
 import NowPlaying from "../Components/NowPlaying";
-import { makeImagePath } from "./utils";
 import { useEffect, useState } from "react";
-import { useHistory, useRouteMatch } from "react-router-dom";
+import { useSetRecoilState } from "recoil";
+import { movieState } from "../atoms";
+import { useRouteMatch } from "react-router-dom";
+import Banner from "../Components/Banner";
+import PopUpMovie from "../Components/PopUpMovie";
 
 const Wrapper = styled.div`
   height: 200vh;
@@ -18,31 +21,6 @@ const Loader = styled.div`
   align-items: center;
 `;
 
-const Banner = styled(motion.div)<{ bgphoto: string }>`
-  height: 100vh;
-  background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1)),
-    url(${(props) => props.bgphoto});
-  background-size: cover;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 60px;
-  * {
-    text-shadow: #fc0 1px 0 10px;
-  }
-`;
-
-const Title = styled.h2`
-  font-size: 68px;
-  margin-bottom: 20px;
-`;
-
-const OverView = styled.p`
-  font-size: 30px;
-  width: 50%;
-  line-height: 42px;
-`;
-
 const offset = 4;
 
 function Home() {
@@ -50,15 +28,15 @@ function Home() {
     ["movies", "nowPlaying"],
     getMovies
   );
-  const history = useHistory();
+  const bigMovieMatch = useRouteMatch("/movies/:movieId");
+  const setMovie = useSetRecoilState<IMovie>(movieState);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  const [banner, setBanner] = useState<IMovie>();
-
-  window.addEventListener("resize", () => setWindowWidth(window.innerWidth));
-
   useEffect(() => {
-    setBanner(() => data?.nowPlaying.results[0]);
+    if (data?.nowPlaying.results[0]) {
+      setMovie(data?.nowPlaying.results[0]);
+    }
   }, [isLoading]);
+  window.addEventListener("resize", () => setWindowWidth(window.innerWidth));
 
   return (
     <Wrapper>
@@ -66,10 +44,7 @@ function Home() {
         <Loader>Loading...</Loader>
       ) : (
         <>
-          <Banner bgphoto={makeImagePath(banner?.backdrop_path ?? "")}>
-            <Title>{banner?.title}</Title>
-            <OverView>{banner?.overview}</OverView>
-          </Banner>
+          <Banner />
           {data === undefined ? null : (
             <NowPlaying
               movies={data.nowPlaying}
@@ -77,6 +52,9 @@ function Home() {
               rowWidth={windowWidth}
             />
           )}
+          <AnimatePresence>
+            {bigMovieMatch ? <PopUpMovie /> : null}
+          </AnimatePresence>
         </>
       )}
     </Wrapper>

@@ -3,6 +3,9 @@ import styled from "styled-components";
 import { IGetMoviesResult } from "../api";
 import { useState } from "react";
 import { makeImagePath } from "../Routes/utils";
+import { useHistory, useRouteMatch } from "react-router-dom";
+import { useRecoilState } from "recoil";
+import { movieState } from "../atoms";
 
 const Wrapper = styled.div`
   position: relative;
@@ -43,6 +46,7 @@ const Box = styled(motion.div)<{ bgphoto: string }>`
   font-size: 34px;
   cursor: pointer;
   position: relative;
+  z-index: 1;
 `;
 
 const BoxInfo = styled(motion.div)`
@@ -85,6 +89,11 @@ const BoxInfoVariants = {
   },
 };
 
+const rowTransition = {
+  type: "linear",
+  duration: 0.8,
+};
+
 interface INowPlaying {
   movies: IGetMoviesResult;
   offset: number;
@@ -94,7 +103,10 @@ interface INowPlaying {
 function NowPlaying({ movies, offset, rowWidth }: INowPlaying) {
   const [[page, direction], setPage] = useState([0, 0]);
   const [exitComplete, setExitComplete] = useState(true);
-
+  const [movie, setMovie] = useRecoilState(movieState);
+  const history = useHistory();
+  const bigMovieMatch = useRouteMatch("/movies/:movieId");
+  console.log(bigMovieMatch);
   const paginate = (newDirection: number) => {
     if (!exitComplete) return;
     const nextPage = page + newDirection;
@@ -110,9 +122,12 @@ function NowPlaying({ movies, offset, rowWidth }: INowPlaying) {
     }
   };
 
-  const rowTransition = {
-    type: "linear",
-    duration: 0.8,
+  const onBoxClicked = (movieId: number) => {
+    history.push(`/movies/${movieId}`);
+    const clickedMovie = movies.results.find((item) => item.id === movieId);
+    if (clickedMovie) {
+      setMovie(() => clickedMovie);
+    }
   };
 
   const rowVariants = {
@@ -156,6 +171,7 @@ function NowPlaying({ movies, offset, rowWidth }: INowPlaying) {
                 whileHover="hover"
                 key={movie.id}
                 bgphoto={makeImagePath(movie.backdrop_path ?? "", "w500")}
+                onClick={() => onBoxClicked(movie.id)}
               >
                 <BoxInfo variants={BoxInfoVariants}>
                   <h4>{movie.title}</h4>
