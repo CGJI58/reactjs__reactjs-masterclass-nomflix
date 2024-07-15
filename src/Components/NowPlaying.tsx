@@ -3,8 +3,8 @@ import styled from "styled-components";
 import { IGetMoviesResult } from "../api";
 import { useState } from "react";
 import { makeImagePath } from "../Routes/utils";
-import { useHistory, useRouteMatch } from "react-router-dom";
-import { useRecoilState } from "recoil";
+import { useHistory } from "react-router-dom";
+import { useSetRecoilState } from "recoil";
 import { movieState } from "../atoms";
 
 const Wrapper = styled.div`
@@ -103,10 +103,8 @@ interface INowPlaying {
 function NowPlaying({ movies, offset, rowWidth }: INowPlaying) {
   const [[page, direction], setPage] = useState([0, 0]);
   const [exitComplete, setExitComplete] = useState(true);
-  const [movie, setMovie] = useRecoilState(movieState);
+  const setMovie = useSetRecoilState(movieState);
   const history = useHistory();
-  const bigMovieMatch = useRouteMatch("/movies/:movieId");
-  console.log(bigMovieMatch);
   const paginate = (newDirection: number) => {
     if (!exitComplete) return;
     const nextPage = page + newDirection;
