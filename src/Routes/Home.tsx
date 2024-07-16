@@ -11,6 +11,7 @@ import Banner from "../Components/Banner";
 import PopUpMovie from "../Components/PopUpMovie";
 
 const Wrapper = styled.div`
+  position: relative;
   height: 200vh;
 `;
 

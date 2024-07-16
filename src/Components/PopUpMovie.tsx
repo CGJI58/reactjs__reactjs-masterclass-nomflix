@@ -1,14 +1,19 @@
-import { motion, useScroll } from "framer-motion";
+import { motion, useMotionValueEvent, useScroll } from "framer-motion";
 import { useHistory } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 import styled from "styled-components";
 import { movieState } from "../atoms";
 import { makeImagePath } from "../Routes/utils";
+import { useState } from "react";
 
-const Wrapper = styled.div``;
+const Wrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 100%;
+`;
 
 const Overlay = styled(motion.div)`
-  position: fixed;
+  position: absolute;
   top: 0;
   width: 100%;
   height: 100%;
@@ -17,7 +22,9 @@ const Overlay = styled(motion.div)`
   z-index: 10;
 `;
 
-const PopUp = styled(motion.div)`
+const PopUp = styled(motion.div)<{ scrollValue: number }>`
+  position: absolute;
+  top: ${(props) => props.scrollValue}px;
   width: 50vw;
   height: 80vh;
   margin: 0 auto;
@@ -49,10 +56,17 @@ const PopUpOverview = styled.p`
   color: ${(props) => props.theme.white.lighter};
 `;
 
+const defaultScrollValue = 100;
+
 function PopUpMovie() {
   const history = useHistory();
   const movie = useRecoilValue(movieState);
   const { scrollY } = useScroll();
+  const [scrollValue, setScrollValue] = useState(defaultScrollValue);
+  useMotionValueEvent(scrollY, "change", (scroll) => {
+    setScrollValue(() => scroll + 100);
+  });
+
   const onOverlayClick = () => history.push("/");
   return (
     <Wrapper>
@@ -61,7 +75,11 @@ function PopUpMovie() {
         exit={{ opacity: 0 }}
         animate={{ opacity: 1 }}
       />
-      <PopUp style={{}} layoutId={movie.id + ""}>
+      <PopUp
+        scrollValue={scrollValue}
+        layoutId={movie.id + ""}
+        transition={{ delay: 0, duration: 0.2, type: "linear" }}
+      >
         {
           <>
             <PopUpCover
