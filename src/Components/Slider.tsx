@@ -95,14 +95,14 @@ const rowTransition = {
   duration: 0.8,
 };
 
-interface INowPlaying {
+interface ISlider {
   movies: IGetMoviesResult;
   offset: number;
   rowWidth: number;
   yValue: number;
 }
 
-function NowPlaying({ movies, offset, rowWidth, yValue }: INowPlaying) {
+function Slider({ movies, offset, rowWidth, yValue }: ISlider) {
   const [[page, direction], setPage] = useState([0, 0]);
   const [exitComplete, setExitComplete] = useState(true);
   const setMovie = useSetRecoilState(movieState);
@@ -200,4 +200,4 @@ function NowPlaying({ movies, offset, rowWidth, yValue }: INowPlaying) {
   );
 }
 
-export default NowPlaying;
+export default Slider;

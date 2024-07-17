@@ -2,13 +2,14 @@ import { useQuery } from "react-query";
 import styled from "styled-components";
 import { AnimatePresence } from "framer-motion";
 import { getMovies, IGetAllMoviesResult, IMovie } from "../api";
-import NowPlaying from "../Components/NowPlaying";
+import NowPlaying from "../Components/Slider";
 import { useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import { movieState } from "../atoms";
 import { useRouteMatch } from "react-router-dom";
 import Banner from "../Components/Banner";
 import PopUpMovie from "../Components/PopUpMovie";
+import Slider from "../Components/Slider";
 
 const Wrapper = styled.div`
   position: relative;
@@ -56,19 +57,19 @@ function Home() {
           <Banner />
           {data === undefined ? null : (
             <Sliders>
-              <NowPlaying
+              <Slider
                 movies={data.nowPlaying}
                 offset={offset}
                 rowWidth={windowWidth}
                 yValue={0}
               />
-              <NowPlaying
+              <Slider
                 movies={data.top_rated}
                 offset={offset}
                 rowWidth={windowWidth}
                 yValue={300}
               />
-              <NowPlaying
+              <Slider
                 movies={data.upcoming}
                 offset={offset}
                 rowWidth={windowWidth}
