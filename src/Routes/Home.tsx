@@ -13,6 +13,7 @@ import PopUpMovie from "../Components/PopUpMovie";
 const Wrapper = styled.div`
   position: relative;
   height: 200vh;
+  overflow: hidden;
 `;
 
 const Loader = styled.div`
@@ -35,6 +36,7 @@ function Home() {
   useEffect(() => {
     if (data?.nowPlaying.results[0]) {
       setMovie(data?.nowPlaying.results[0]);
+      console.log(data);
     }
   }, [isLoading]);
   window.addEventListener("resize", () => setWindowWidth(window.innerWidth));

@@ -22,9 +22,9 @@ const Overlay = styled(motion.div)`
   z-index: 10;
 `;
 
-const PopUp = styled(motion.div)<{ scrollValue: number }>`
+const PopUp = styled(motion.div)<{ scrollvalue: number }>`
   position: absolute;
-  top: ${(props) => props.scrollValue}px;
+  top: ${(props) => props.scrollvalue}px;
   width: 50vw;
   height: 80vh;
   margin: 0 auto;
@@ -76,7 +76,7 @@ function PopUpMovie() {
         animate={{ opacity: 1 }}
       />
       <PopUp
-        scrollValue={scrollValue}
+        scrollvalue={scrollValue}
         layoutId={movie.id + ""}
         transition={{ delay: 0, duration: 0.2, type: "linear" }}
       >
