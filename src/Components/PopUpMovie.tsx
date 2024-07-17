@@ -63,6 +63,7 @@ function PopUpMovie() {
   const movie = useRecoilValue(movieState);
   const { scrollY } = useScroll();
   const [scrollValue, setScrollValue] = useState(defaultScrollValue);
+
   useMotionValueEvent(scrollY, "change", (scroll) => {
     setScrollValue(() => scroll + 100);
   });

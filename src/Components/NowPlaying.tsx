@@ -7,10 +7,11 @@ import { useHistory } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 import { movieState } from "../atoms";
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ y: number }>`
   position: relative;
   display: flex;
   align-items: center;
+  top: ${(props) => props.y}px;
 `;
 
 const Button = styled(motion.div)<{ direction: string }>`
@@ -30,10 +31,10 @@ const Button = styled(motion.div)<{ direction: string }>`
 `;
 
 const Row = styled(motion.div)<{ offset: number }>`
+  position: absolute;
   display: grid;
   gap: 5px;
   grid-template-columns: repeat(${(props) => props.offset}, 1fr);
-  position: absolute;
   width: 100%;
   padding: 0 5px;
 `;
@@ -98,9 +99,10 @@ interface INowPlaying {
   movies: IGetMoviesResult;
   offset: number;
   rowWidth: number;
+  yValue: number;
 }
 
-function NowPlaying({ movies, offset, rowWidth }: INowPlaying) {
+function NowPlaying({ movies, offset, rowWidth, yValue }: INowPlaying) {
   const [[page, direction], setPage] = useState([0, 0]);
   const [exitComplete, setExitComplete] = useState(true);
   const setMovie = useSetRecoilState(movieState);
@@ -144,7 +146,7 @@ function NowPlaying({ movies, offset, rowWidth }: INowPlaying) {
   };
 
   return (
-    <Wrapper>
+    <Wrapper y={yValue}>
       <AnimatePresence
         initial={false}
         custom={direction}

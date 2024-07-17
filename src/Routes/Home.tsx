@@ -23,6 +23,12 @@ const Loader = styled.div`
   align-items: center;
 `;
 
+const Sliders = styled.div`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+`;
+
 const offset = 4;
 
 function Home() {
@@ -49,11 +55,26 @@ function Home() {
         <>
           <Banner />
           {data === undefined ? null : (
-            <NowPlaying
-              movies={data.nowPlaying}
-              offset={offset}
-              rowWidth={windowWidth}
-            />
+            <Sliders>
+              <NowPlaying
+                movies={data.nowPlaying}
+                offset={offset}
+                rowWidth={windowWidth}
+                yValue={0}
+              />
+              <NowPlaying
+                movies={data.top_rated}
+                offset={offset}
+                rowWidth={windowWidth}
+                yValue={300}
+              />
+              <NowPlaying
+                movies={data.upcoming}
+                offset={offset}
+                rowWidth={windowWidth}
+                yValue={600}
+              />
+            </Sliders>
           )}
           <AnimatePresence>
             {bigMovieMatch ? <PopUpMovie /> : null}
