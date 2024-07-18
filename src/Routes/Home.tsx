@@ -61,18 +61,21 @@ function Home() {
                 movies={data.nowPlaying}
                 offset={offset}
                 rowWidth={windowWidth}
+                category="nowPlaying"
                 yValue={0}
               />
               <Slider
                 movies={data.top_rated}
                 offset={offset}
                 rowWidth={windowWidth}
+                category="top_rated"
                 yValue={300}
               />
               <Slider
                 movies={data.upcoming}
                 offset={offset}
                 rowWidth={windowWidth}
+                category="upcoming"
                 yValue={600}
               />
             </Sliders>

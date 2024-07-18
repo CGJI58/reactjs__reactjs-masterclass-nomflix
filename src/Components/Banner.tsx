@@ -37,7 +37,10 @@ function Banner() {
     setBanner(movie);
   }, [movie]);
   return (
-    <Wrapper bgphoto={makeImagePath(banner?.backdrop_path ?? "")}>
+    <Wrapper
+      bgphoto={makeImagePath(banner?.backdrop_path ?? "")}
+      layoutId={movie.id + "banner"}
+    >
       <Title>{banner?.title}</Title>
       <OverView>{banner?.overview}</OverView>
     </Wrapper>

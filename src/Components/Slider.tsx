@@ -100,9 +100,10 @@ interface ISlider {
   offset: number;
   rowWidth: number;
   yValue: number;
+  category: string;
 }
 
-function Slider({ movies, offset, rowWidth, yValue }: ISlider) {
+function Slider({ movies, offset, rowWidth, yValue, category }: ISlider) {
   const [[page, direction], setPage] = useState([0, 0]);
   const [exitComplete, setExitComplete] = useState(true);
   const setMovie = useSetRecoilState(movieState);
@@ -126,7 +127,7 @@ function Slider({ movies, offset, rowWidth, yValue }: ISlider) {
     history.push(`/movies/${movieId}`);
     const clickedMovie = movies.results.find((item) => item.id === movieId);
     if (clickedMovie) {
-      setMovie(() => clickedMovie);
+      setMovie(() => ({ ...clickedMovie, category }));
     }
   };
 
@@ -165,7 +166,7 @@ function Slider({ movies, offset, rowWidth, yValue }: ISlider) {
             .slice(page * offset, (page + 1) * offset)
             .map((movie) => (
               <Box
-                layoutId={movie.id + ""}
+                layoutId={movie.id + category}
                 variants={BoxVariants}
                 initial="normal"
                 whileHover="hover"
