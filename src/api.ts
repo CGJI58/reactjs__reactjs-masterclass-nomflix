@@ -1,6 +1,8 @@
 const API_KEY = "a4072b5f96ae97201134740f0b7887fb";
 const BASE_PATH = "https://api.themoviedb.org/3";
 
+export type Categories = "nowPlaying" | "top_rated" | "upcoming";
+
 export interface IMovie {
   adult: boolean;
   backdrop_path: string;
@@ -16,7 +18,7 @@ export interface IMovie {
   video: boolean;
   vote_average: number;
   vote_count: number;
-  category?: string;
+  category?: Categories;
 }
 
 export interface IGetMoviesResult {

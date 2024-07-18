@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import styled from "styled-components";
-import { IGetMoviesResult } from "../api";
+import { Categories, IGetMoviesResult } from "../api";
 import { useState } from "react";
 import { makeImagePath } from "../Routes/utils";
 import { useHistory } from "react-router-dom";
@@ -100,7 +100,7 @@ interface ISlider {
   offset: number;
   rowWidth: number;
   yValue: number;
-  category: string;
+  category: Categories;
 }
 
 function Slider({ movies, offset, rowWidth, yValue, category }: ISlider) {

@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
 import { movieState } from "../atoms";
 import styled from "styled-components";
@@ -32,17 +31,14 @@ const OverView = styled.p`
 
 function Banner() {
   const movie = useRecoilValue(movieState);
-  const [banner, setBanner] = useState(movie);
-  useEffect(() => {
-    setBanner(movie);
-  }, [movie]);
+
   return (
     <Wrapper
-      bgphoto={makeImagePath(banner?.backdrop_path ?? "")}
+      bgphoto={makeImagePath(movie?.backdrop_path ?? "")}
       layoutId={movie.id + "banner"}
     >
-      <Title>{banner?.title}</Title>
-      <OverView>{banner?.overview}</OverView>
+      <Title>{movie?.title}</Title>
+      <OverView>{movie?.overview}</OverView>
     </Wrapper>
   );
 }

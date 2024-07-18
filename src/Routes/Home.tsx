@@ -1,8 +1,7 @@
 import { useQuery } from "react-query";
 import styled from "styled-components";
 import { AnimatePresence } from "framer-motion";
-import { getMovies, IGetAllMoviesResult, IMovie } from "../api";
-import NowPlaying from "../Components/Slider";
+import { Categories, getMovies, IGetAllMoviesResult, IMovie } from "../api";
 import { useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import { movieState } from "../atoms";
@@ -31,6 +30,7 @@ const Sliders = styled.div`
 `;
 
 const offset = 4;
+const sliderInterval = 300;
 
 function Home() {
   const { data, isLoading } = useQuery<IGetAllMoviesResult>(
@@ -40,12 +40,13 @@ function Home() {
   const bigMovieMatch = useRouteMatch("/movies/:movieId");
   const setMovie = useSetRecoilState<IMovie>(movieState);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const sliders: Categories[] = ["nowPlaying", "top_rated", "upcoming"];
+
   useEffect(() => {
     if (data?.nowPlaying.results[0]) {
       setMovie(data?.nowPlaying.results[0]);
-      console.log(data);
     }
-  }, [isLoading]);
+  }, [data, setMovie]);
   window.addEventListener("resize", () => setWindowWidth(window.innerWidth));
 
   return (
@@ -57,27 +58,16 @@ function Home() {
           <Banner />
           {data === undefined ? null : (
             <Sliders>
-              <Slider
-                movies={data.nowPlaying}
-                offset={offset}
-                rowWidth={windowWidth}
-                category="nowPlaying"
-                yValue={0}
-              />
-              <Slider
-                movies={data.top_rated}
-                offset={offset}
-                rowWidth={windowWidth}
-                category="top_rated"
-                yValue={300}
-              />
-              <Slider
-                movies={data.upcoming}
-                offset={offset}
-                rowWidth={windowWidth}
-                category="upcoming"
-                yValue={600}
-              />
+              {sliders.map((category, index) => (
+                <Slider
+                  key={category}
+                  movies={data[category]}
+                  offset={offset}
+                  rowWidth={windowWidth}
+                  category={category}
+                  yValue={index * sliderInterval}
+                />
+              ))}
             </Sliders>
           )}
           <AnimatePresence>
