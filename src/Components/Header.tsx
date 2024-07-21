@@ -1,5 +1,10 @@
-import { motion, useAnimation, useScroll } from "framer-motion";
-import { useEffect, useState } from "react";
+import {
+  motion,
+  useAnimation,
+  useMotionValueEvent,
+  useScroll,
+} from "framer-motion";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useHistory, useRouteMatch } from "react-router-dom";
 import styled from "styled-components";
@@ -129,15 +134,15 @@ function Header() {
     }
     setSearchOpen((prev) => !prev);
   };
-  useEffect(() => {
-    scrollY.onChange(() => {
-      if (scrollY.get() > 80) {
-        navAnimation.start("scroll");
-      } else {
-        navAnimation.start("top");
-      }
-    });
-  }, [scrollY, navAnimation]);
+
+  useMotionValueEvent(scrollY, "change", (scroll) => {
+    if (scroll > 80) {
+      navAnimation.start("scroll");
+    } else {
+      navAnimation.start("top");
+    }
+  });
+
   const history = useHistory();
   const { register, handleSubmit } = useForm<IForm>();
   const onValid = (data: IForm) => {

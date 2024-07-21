@@ -78,7 +78,7 @@ function PopUpMovie() {
       />
       <PopUp
         scrollvalue={scrollValue}
-        transition={{ delay: 0, duration: 0.2, type: "linear" }}
+        transition={{ delay: 0, duration: 0.2 }}
         layoutId={movie.category ? movie.id + movie.category : movie.id + ""}
       >
         {

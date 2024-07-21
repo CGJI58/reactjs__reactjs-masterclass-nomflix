@@ -56,3 +56,17 @@ export async function getMovies() {
     upcoming,
   };
 }
+
+/**
+ * 검색할 수 있는 조건들 : language, query(keyword), page, include_adult(boolean)
+ * 일단 query(keyword) 만 검색하는걸로 만들고, 나중에 다른것들 구현할 것.
+ */
+export async function getSearch(keyWord: string) {
+  const Search = await (
+    await fetch(
+      `${BASE_PATH}/search/multi?api_key=${API_KEY}&language=en-US&query=${keyWord}&page=1&include_adult=false`
+    )
+  ).json();
+
+  return { Search };
+}
