@@ -7,15 +7,34 @@ import { useHistory } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 import { movieState } from "../atoms";
 
+const BOX_HEIGHT = 200;
+const BUTTON_DIAMETER = 50;
+const TITLE_HEIGHT = 50;
+
 const Wrapper = styled.div<{ y: number }>`
+  margin: 0 5px;
   position: relative;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  justify-content: center;
   top: ${(props) => props.y}px;
+`;
+
+const Title = styled.div`
+  display: flex;
+  align-items: center;
+  position: absolute;
+  top: -${TITLE_HEIGHT}px;
+  height: ${TITLE_HEIGHT}px;
+  z-index: 3;
+  left: 0;
+  font-size: 28px;
+  font-weight: 600;
 `;
 
 const Button = styled(motion.div)<{ direction: string }>`
   position: absolute;
+  top: ${BOX_HEIGHT / 2 - BUTTON_DIAMETER / 2}px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -36,7 +55,6 @@ const Row = styled(motion.div)<{ offset: number }>`
   gap: 5px;
   grid-template-columns: repeat(${(props) => props.offset}, 1fr);
   width: 100%;
-  padding: 0 5px;
 `;
 
 const Box = styled(motion.div)<{ bgphoto: string }>`
@@ -148,6 +166,7 @@ function Slider({ movies, offset, rowWidth, yValue, category }: ISlider) {
 
   return (
     <Wrapper y={yValue}>
+      <Title>{category}</Title>
       <AnimatePresence
         initial={false}
         custom={direction}

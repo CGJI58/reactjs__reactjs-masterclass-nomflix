@@ -12,7 +12,7 @@ import Slider from "../Components/Slider";
 
 const Wrapper = styled.div`
   position: relative;
-  height: 200vh;
+  height: 250vh;
   overflow: hidden;
 `;
 
